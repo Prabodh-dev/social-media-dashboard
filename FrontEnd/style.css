@@ -1,0 +1,253 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+}
+
+.header {
+  background: #3578e5;
+  padding: 0;
+  height: 70px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.header-content {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 70px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 30px;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.header-buttons button {
+  background: #fff;
+  color: #3578e5;
+  border: 2px solid #fff;
+  border-radius: 6px;
+  padding: 8px 22px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.header-buttons button:hover {
+  background: #e3eaff;
+  border-color: #3578e5;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 60px;
+}
+
+.welcome-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 6px #aaa;
+  text-align: center;
+}
+
+.welcome-desc {
+  font-size: 1.15rem;
+  color: #444;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.platform-buttons {
+  display: flex;
+  gap: 20px;
+}
+
+.platform-btn {
+  background: #3578e5;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+}
+
+.platform-btn:hover {
+  background: #285bb5;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  background: rgba(0,0,0,0.3);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #fff;
+  margin: 10% auto;
+  padding: 30px 30px 20px 30px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 350px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 18px;
+  font-size: 1.5rem;
+  color: #3578e5;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.modal-content h2 {
+  margin-bottom: 18px;
+  color: #3578e5;
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 12px;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="password"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.modal-content button[type="submit"] {
+  background: #3578e5;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+
+.modal-content button[type="submit"]:hover {
+  background: #285bb5;
+}
+
+.error-message {
+  color: #d32f2f;
+  font-size: 0.95rem;
+  margin-top: 8px;
+  min-height: 20px;
+  text-align: center;
+}
+
+.post-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  margin: 18px 0;
+  padding: 18px 22px 12px 22px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.post-content {
+  font-size: 1.1rem;
+  color: #222;
+  margin-bottom: 10px;
+  word-break: break-word;
+}
+
+.post-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.98rem;
+  color: #555;
+}
+
+.edit-btn, .delete-btn {
+  background: #e3eaff;
+  color: #3578e5;
+  border: none;
+  border-radius: 5px;
+  padding: 4px 14px;
+  font-size: 0.98rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.edit-btn:hover {
+  background: #3578e5;
+  color: #fff;
+}
+.delete-btn:hover {
+  background: #d32f2f;
+  color: #fff;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 18px 0 0 0;
+}
+
+.page-btn {
+  background: #fff;
+  color: #3578e5;
+  border: 1.5px solid #3578e5;
+  border-radius: 5px;
+  padding: 4px 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.page-btn:disabled {
+  background: #3578e5;
+  color: #fff;
+  cursor: default;
+}
+
+#postContent {
+  font-size: 1rem;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  resize: vertical;
+} 

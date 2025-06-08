@@ -1,0 +1,20 @@
+# Node modules
+node_modules
+
+# Environment files
+.env
+
+# Logs
+.log
+
+# System files
+.DS_Store
+
+# Dependency locks (optional, keep one of the two)
+yarn.lock
+
+# Docker volume data
+data
+
+# Ignore VS Code settings (optional)
+.vscode
