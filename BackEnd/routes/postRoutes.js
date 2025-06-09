@@ -20,22 +20,26 @@ router.post('/', protect, async (req, res) => {
 
 // Get posts with pagination (page & limit query params)
 router.get('/', async (req, res) => {
-  const page = Number(req.query.page) || 1;
-  const limit = 3;
-  const skip = (page - 1) * limit;
+  const page = Number(req.query.page);
+  const limit = Number(req.query.limit);
 
   try {
-    const total = await Post.countDocuments();
-    const posts = await Post.find()
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .populate('author', 'username');
-
+    let postsQuery = Post.find().sort({ createdAt: -1 }).populate('author', 'username');
+    let total = await Post.countDocuments();
+    let posts;
+    let pages = 1;
+    if (limit && page) {
+      const skip = (page - 1) * limit;
+      posts = await postsQuery.skip(skip).limit(limit);
+      pages = Math.ceil(total / limit);
+    } else {
+      posts = await postsQuery;
+    }
     res.json({
       posts,
-      page,
-      pages: Math.ceil(total / limit),
+      page: page || 1,
+      pages,
+      total
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

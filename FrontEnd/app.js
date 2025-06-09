@@ -1,31 +1,45 @@
 // app.js - placeholder for future interactivity 
 
 // Modal logic
-const registerBtn = document.getElementById('registerBtn');
-const loginBtn = document.getElementById('loginBtn');
 const registerModal = document.getElementById('registerModal');
 const loginModal = document.getElementById('loginModal');
 const closeRegister = document.getElementById('closeRegister');
 const closeLogin = document.getElementById('closeLogin');
+const fab = document.getElementById('createPostBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+const homeNav = document.getElementById('homeNav');
+const profileNav = document.getElementById('profileNav');
 
-registerBtn.onclick = () => {
-  registerModal.style.display = 'flex';
-};
-loginBtn.onclick = () => {
-  loginModal.style.display = 'flex';
-};
+// Show login/register modals if not logged in
+function showAuthModal() {
+  showWelcomeScreen();
+}
+
 closeRegister.onclick = () => {
   registerModal.style.display = 'none';
+  if (!localStorage.getItem('token')) {
+    document.getElementById('welcomeScreen').style.display = 'flex';
+  }
 };
 closeLogin.onclick = () => {
   loginModal.style.display = 'none';
+  if (!localStorage.getItem('token')) {
+    document.getElementById('welcomeScreen').style.display = 'flex';
+  }
 };
 window.onclick = function(event) {
   if (event.target === registerModal) registerModal.style.display = 'none';
   if (event.target === loginModal) loginModal.style.display = 'none';
+  const postModal = document.getElementById('postModal');
+  if (postModal && event.target === postModal) postModal.style.display = 'none';
 };
 
-// Placeholder for form submission
+// Show register modal from login modal (optional, add a link if you want)
+// document.getElementById('toRegister').onclick = () => {
+//   loginModal.style.display = 'none';
+//   registerModal.style.display = 'flex';
+// };
+
 const registerForm = document.getElementById('registerForm');
 const loginForm = document.getElementById('loginForm');
 
@@ -46,7 +60,6 @@ registerForm.onsubmit = async (e) => {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Registration failed');
-    // Save token and username
     localStorage.setItem('token', data.token);
     localStorage.setItem('username', data.username);
     registerModal.style.display = 'none';
@@ -70,7 +83,6 @@ loginForm.onsubmit = async (e) => {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Login failed');
-    // Save token and username
     localStorage.setItem('token', data.token);
     localStorage.setItem('username', data.username);
     loginModal.style.display = 'none';
@@ -80,12 +92,36 @@ loginForm.onsubmit = async (e) => {
   }
 };
 
+function showWelcomeScreen() {
+  document.getElementById('welcomeScreen').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar) sidebar.style.display = 'none';
+  // Hide nav avatar
+  const navAvatar = document.getElementById('userAvatar');
+  if (navAvatar) navAvatar.style.display = 'none';
+  // Hide logout button
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) logoutBtn.style.display = 'none';
+}
+
+function showDashboard() {
+  document.getElementById('welcomeScreen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar) sidebar.style.display = '';
+  // Show nav avatar and logout
+  const navAvatar = document.getElementById('userAvatar');
+  if (navAvatar) navAvatar.style.display = '';
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) logoutBtn.style.display = '';
+}
+
 function showWelcome() {
+  showDashboard();
   const username = localStorage.getItem('username');
   document.querySelector('.main-content').innerHTML = `
-    <h1 class="welcome-title">Welcome, <span style=\"color:#3578e5\">${username}</span>!</h1>
-    <button id="logoutBtn" class="platform-btn" style="margin-top:30px;">Logout</button>
-    <button id="createPostBtn" class="platform-btn" style="margin-top:30px; margin-left:10px;">Create Post</button>
+    <h1 class="welcome-title">Welcome, <span style=\"color:#5a95f5\">${username}</span>!</h1>
     <div id="dashboard"></div>
     <!-- Create/Edit Post Modal -->
     <div id="postModal" class="modal">
@@ -100,14 +136,22 @@ function showWelcome() {
       </div>
     </div>
   `;
-  document.getElementById('logoutBtn').onclick = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
-    location.reload();
-  };
-  document.getElementById('createPostBtn').onclick = () => openPostModal();
+  // Inject user info in sidebar
+  const userCard = document.getElementById('sidebarUserCard');
+  if (userCard) {
+    userCard.innerHTML = `
+      <span class="user-avatar" style="display:block;margin:0 auto 8px auto;background-image:url('https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=3578e5&color=fff');background-size:cover;"></span>
+      <div class="username">${username}</div>
+    `;
+  }
+  // Set avatar in nav
+  const navAvatar = document.getElementById('userAvatar');
+  if (navAvatar) {
+    navAvatar.style.backgroundImage = `url('https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=3578e5&color=fff')`;
+    navAvatar.style.backgroundSize = 'cover';
+  }
   setupPostModal();
-  loadPosts(1);
+  loadPosts();
 }
 
 function setupPostModal() {
@@ -161,31 +205,31 @@ document.addEventListener('submit', async function(e) {
       data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Failed to save post');
       document.getElementById('postModal').style.display = 'none';
-      loadPosts(1);
+      loadPosts();
     } catch (err) {
       errorDiv.textContent = err.message;
     }
   }
 });
 
-async function loadPosts(page = 1) {
+async function loadPosts() {
   const token = localStorage.getItem('token');
   if (!token) return;
   const dashboard = document.getElementById('dashboard');
   dashboard.innerHTML = '<div style="text-align:center;">Loading posts...</div>';
   try {
-    const res = await fetch(`${POSTS_API}?page=${page}&limit=3`, {
+    const res = await fetch(`${POSTS_API}`, {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Failed to load posts');
-    renderPosts(data.posts, data.page, data.totalPages);
+    renderPosts(data.posts, 1, 1, data.posts);
   } catch (err) {
     dashboard.innerHTML = `<div class="error-message">${err.message}</div>`;
   }
 }
 
-function renderPosts(posts, page, totalPages) {
+function renderPosts(posts, page, totalPages, allPosts = null) {
   const username = localStorage.getItem('username');
   let html = '';
   if (!posts.length) {
@@ -204,12 +248,6 @@ function renderPosts(posts, page, totalPages) {
       </div>
     `).join('');
   }
-  // Pagination
-  html += '<div class="pagination">';
-  for (let i = 1; i <= totalPages; i++) {
-    html += `<button class="page-btn" data-page="${i}"${i === page ? ' disabled' : ''}>${i}</button>`;
-  }
-  html += '</div>';
   document.getElementById('dashboard').innerHTML = html;
 
   // Add event listeners for edit/delete
@@ -219,9 +257,21 @@ function renderPosts(posts, page, totalPages) {
   document.querySelectorAll('.delete-btn').forEach(btn => {
     btn.onclick = () => deletePost(btn.getAttribute('data-id'));
   });
-  document.querySelectorAll('.page-btn').forEach(btn => {
-    btn.onclick = () => loadPosts(Number(btn.getAttribute('data-page')));
-  });
+
+  // Update stats widget
+  const stats = document.getElementById('userStats');
+  if (stats) {
+    let userPostsCount = 0;
+    if (allPosts && Array.isArray(allPosts) && allPosts.length) {
+      userPostsCount = allPosts.filter(post => post.author.username === username).length;
+    } else {
+      userPostsCount = posts.filter(post => post.author.username === username).length;
+    }
+    stats.innerHTML = `
+      <div><b>Your Posts:</b> ${userPostsCount}</div>
+      <div><b>Feed:</b> All Posts</div>
+    `;
+  }
 }
 
 async function deletePost(postId) {
@@ -234,7 +284,7 @@ async function deletePost(postId) {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Failed to delete post');
-    loadPosts(1);
+    loadPosts();
   } catch (err) {
     alert(err.message);
   }
@@ -245,7 +295,81 @@ function escapeHtml(text) {
   return text.replace(/[&<>"']/g, m => map[m]);
 }
 
-// Auto-show welcome if already logged in
+// --- New: Floating button and nav logic ---
+if (fab) {
+  fab.onclick = () => {
+    // Only allow if logged in
+    if (!localStorage.getItem('token')) {
+      showAuthModal();
+      return;
+    }
+    // If post modal exists, show it; else, create it
+    let postModal = document.getElementById('postModal');
+    if (!postModal) {
+      showWelcome();
+      postModal = document.getElementById('postModal');
+    }
+    openPostModal();
+  };
+}
+
+if (logoutBtn) {
+  logoutBtn.onclick = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    showWelcomeScreen();
+  };
+}
+
+if (homeNav) {
+  homeNav.onclick = () => {
+    if (localStorage.getItem('token')) {
+      showWelcome();
+    } else {
+      showAuthModal();
+    }
+  };
+}
+
+if (profileNav) {
+  profileNav.onclick = () => {
+    alert('Profile page coming soon!');
+  };
+}
+
+// Floating logout button logic
+const logoutBtnFloating = document.getElementById('logoutBtnFloating');
+if (logoutBtnFloating) {
+  logoutBtnFloating.onclick = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    showWelcomeScreen();
+  };
+}
+
+// On load, show welcome screen or dashboard
 if (localStorage.getItem('token') && localStorage.getItem('username')) {
+  showDashboard();
   showWelcome();
-} 
+} else {
+  showWelcomeScreen();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const regBtn = document.getElementById('welcomeRegisterBtn');
+  const logBtn = document.getElementById('welcomeLoginBtn');
+  if (regBtn) regBtn.onclick = () => {
+    console.log('Register button clicked');
+    document.getElementById('welcomeScreen').style.display = 'none';
+    const regModal = document.getElementById('registerModal');
+    if (regModal) regModal.style.display = 'flex';
+    else console.log('Register modal not found');
+  };
+  if (logBtn) logBtn.onclick = () => {
+    console.log('Login button clicked');
+    document.getElementById('welcomeScreen').style.display = 'none';
+    const logModal = document.getElementById('loginModal');
+    if (logModal) logModal.style.display = 'flex';
+    else console.log('Login modal not found');
+  };
+}); 

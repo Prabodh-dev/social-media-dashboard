@@ -4,28 +4,64 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Social Media Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="header">
-    <div class="header-content">
-      <div></div>
-      <div class="header-buttons">
-        <button id="registerBtn">Register</button>
-        <button id="loginBtn">Login</button>
+  <!-- Top Navigation Bar -->
+  <nav class="top-nav">
+    <div class="nav-left">
+      <img src="https://img.icons8.com/fluency/48/000000/share.png" alt="Logo" class="logo"/>
+      <span class="app-title">Socially</span>
+    </div>
+    <div class="nav-right">
+      <!-- Removed user avatar -->
+    </div>
+  </nav>
+  <div id="welcomeScreen" class="welcome-screen" style="display:none;">
+    <div class="welcome-box">
+      <h1 class="welcome-title">Welcome to Socially!</h1>
+      <p class="welcome-desc">A modern, dark-themed social dashboard.<br>Sign up or log in to get started.</p>
+      <div class="welcome-actions">
+        <button id="welcomeRegisterBtn" class="nav-btn">Register</button>
+        <button id="welcomeLoginBtn" class="nav-btn">Login</button>
       </div>
     </div>
-  </header>
-  <main class="main-content">
-    <h1 class="welcome-title">Welcome to the Social Media Dashboard App!</h1>
-    <p class="welcome-desc">Explore and manage your social media accounts in one place.</p>
-    <div class="platform-buttons">
-      <button class="platform-btn" id="facesnapBtn">FACESNAP</button>
-      <button class="platform-btn" id="instabookBtn">INSTABOOK</button>
-      <button class="platform-btn" id="tweetchatBtn">TWEETCHAT</button>
-    </div>
-  </main>
-
+  </div>
+  <div class="dashboard-layout">
+    <!-- Sidebar/Widgets -->
+    <aside class="sidebar">
+      <div class="user-card" id="sidebarUserCard">
+        <!-- User info will be injected here -->
+      </div>
+      <div class="widget stats-widget">
+        <h3>Stats</h3>
+        <div id="userStats"></div>
+      </div>
+      <div class="widget trending-widget">
+        <h3>Trending</h3>
+        <ul id="trendingList">
+          <li>#javascript</li>
+          <li>#webdev</li>
+          <li>#darkmode</li>
+          <li>#reactjs</li>
+          <li>#design</li>
+        </ul>
+      </div>
+    </aside>
+    <!-- Main Feed -->
+    <main class="main-content">
+      <div id="dashboard"></div>
+    </main>
+  </div>
+  <!-- Floating Create Post Button -->
+  <button id="createPostBtn" class="fab" title="Create Post">
+    <span>+</span>
+  </button>
+  <!-- Floating Logout Button -->
+  <button id="logoutBtnFloating" class="fab-logout" title="Logout">Logout</button>
   <!-- Register Modal -->
   <div id="registerModal" class="modal">
     <div class="modal-content">
@@ -39,7 +75,6 @@
       <div id="registerError" class="error-message"></div>
     </div>
   </div>
-
   <!-- Login Modal -->
   <div id="loginModal" class="modal">
     <div class="modal-content">
